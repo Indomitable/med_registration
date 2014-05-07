@@ -1,0 +1,32 @@
+{% extends "main.html" %}
+{% block main %}
+    <div class="container" ng-controller="doctorsController">
+        <button class="btn btn-default" ng-click="add()">Добави нов лекар</button>
+        <table class="table table-hover">
+            <thead>
+            <tr>
+                <th style="width: 10px"></th>
+                <th style="width: 100px; text-align: center">Титла</th>
+                <th style="width: 100px; text-align: center">Име</th>
+                <th style="width: 100px; text-align: center">Фамилия</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for doc in doctors %}
+                <tr>
+                    <td class="controls">
+                        <a href="{% url "doctor_schedule" doc.pk %}">
+                            <span class="glyphicon glyphicon-calendar"></span>
+                        </a>
+                        <a><span class="glyphicon glyphicon-remove"></span></a>
+                        <a><span class="glyphicon glyphicon-pencil"></span></a>
+                    </td>
+                    <td>{{ doc.title.name }}</td>
+                    <td>{{ doc.first_name }}</td>
+                    <td>{{ doc.last_name }}</td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+{% endblock %}

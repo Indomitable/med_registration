@@ -1,0 +1,44 @@
+html, body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  width: 100%;
+}
+
+$modal-form-input-width: 300px;
+
+.modal-form {
+    padding: 20px 10px;
+}
+
+td.controls {
+  font-size: 20px;
+
+  a {
+    padding: 0 5px;
+    text-decoration: none;
+  }
+}
+
+input[type='number'] {
+  text-align: right;
+}
+
+table.calendar {
+    th{
+      width: 100px;
+      text-align: center;
+    }
+
+    td {
+      text-align: center;
+    }
+
+    tr.month {
+      font-weight: bold;
+    }
+
+    td.day {
+      border: 1px solid black;
+    }
+}

@@ -1,0 +1,15 @@
+- model: app.Title
+  pk: 1
+  fields:
+    abr: док.
+    name: Доктор
+- model: app.Title
+  pk: 2
+  fields:
+    abr: доц.
+    name: Доцент
+- model: app.Title
+  pk: 3
+  fields:
+    abr: проф.
+    name: Професор

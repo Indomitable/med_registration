@@ -1,0 +1,9 @@
+{% extends "main.html" %}
+{% block main %}
+    <div class="container">
+        <h4>График на {{ doctor.title.abr }}{{ doctor.first_name }} {{ doctor.last_name }}</h4>
+        {% load calendar %}
+        {% cal_html 60 %}
+
+    </div>
+{% endblock %}
