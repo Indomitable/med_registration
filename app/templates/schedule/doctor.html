@@ -2,8 +2,69 @@
 {% block main %}
     <div class="container">
         <h4>График на {{ doctor.title.abr }}{{ doctor.first_name }} {{ doctor.last_name }}</h4>
-        {% load calendar %}
-        {% cal_html 60 %}
 
+        <div ng-controller="scheduleController" ng-init="getSchedule({{ doctor.pk }})">
+            <div class="row">
+                <div class="col-sm-8">
+                    <div ng-repeat="month in months" class="month">
+                        <table>
+                            <thead>
+                            <tr>
+                                <th colspan="7" ng-bind="month.name"></th>
+                            </tr>
+                            <tr>
+                                <th>пон</th>
+                                <th>вт</th>
+                                <th>ср</th>
+                                <th>чет</th>
+                                <th>пет</th>
+                                <th>съб</th>
+                                <th>нед</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr ng-repeat="week in month.weeks">
+                                <td ng-repeat="day in week" ng-click="onDateClick(day)" ng-bind="day.date | dayFormat"
+                                    ng-class="{'selected': day.selected}"></td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="col-sm-4" ng-show="hasSelected()">
+                    <ul class="clear-list">
+                        <li ng-repeat="workInterval in workIntervals track by $index" style="margin-bottom: 10px">
+                            <div ng-class="{ 'overlapping': is_overlapps($index) }">
+                                <div style="margin-bottom: 10px">
+                                    <div style="display: inline-block;">
+                                        От:<span ng-bind="fromHour($index)"></span>
+                                        До:<span ng-bind="toHour($index)"></span>
+                                    </div>
+                                    <label style="float: right"><input type="checkbox" ng-model="workIntervals[$index].nzok">Преглежда по каса?</label>
+                                </div>
+
+                                <div ui-slider="{range: true}" min="0" max="24" step="0.25" use-decimals
+                                     ng-model="workIntervals[$index].interval"></div>
+                            </div>
+                        </li>
+                    </ul>
+                    <div style="margin-top: 10px">
+                        <label>Бележка:</label>
+                        <textarea ng-model="workIntervals[$index].note" maxlength="1000" style="width: 100%; height: 100px"></textarea>
+                    </div>
+                    <div style="margin-top: 10px">
+                        <button ng-click="addWorkHours()" class="btn btn-default">Добави интервал</button>
+                        <button ng-click="setWorkHours({{ doctor.pk }})" class="btn btn-default">Добави работните
+                            часове
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
+{% endblock %}
+
+{% block scripts %}
+    {% load staticfiles %}
+    <script src="{% static "js/scheduleController.js" %}" type="text/javascript"></script>
 {% endblock %}

@@ -13,3 +13,10 @@
   fields:
     abr: проф.
     name: Професор
+- model: app.Doctor
+  pk: 1
+  fields:
+   title: 2
+   first_name: Венцислав
+   last_name: Младенов
+   default_exam_time: 20

@@ -1,4 +1,13 @@
-var app = angular.module("app", ["ui.bootstrap"]);
+var app = angular.module("app", ['ui.bootstrap', 'ui.slider', 'ngCookies']);
+
+app.config(['$httpProvider', function($httpProvider) {
+      //  $httpProvider.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded;charset=utf-8';
+        $httpProvider.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest';
+    }]);
+
+app.run(['$http', '$cookies', function($http, $cookies) {
+        $http.defaults.headers.post['X-CSRFToken'] = $cookies.csrftoken;
+    }]);
 
 app.controller("doctorsController", ["$scope", "$modal", function($scope, $modal){
     $scope.add = function() {

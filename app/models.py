@@ -21,8 +21,14 @@ class Doctor(models.Model):
 
 class Schedule(models.Model):
     doctor = models.ForeignKey(Doctor)
-    from_date = models.DateTimeField()
-    to_date = models.DateTimeField()
+    date = models.DateField()
+    note = models.CharField(max_length=1000)
+
+
+class ScheduleDate(models.Model):
+    schedule = models.ForeignKey(Schedule)
+    from_time = models.TimeField()
+    to_time = models.TimeField()
     nzok = models.BooleanField(default=False)
 
 

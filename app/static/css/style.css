@@ -13,15 +13,28 @@ td.controls {
     padding: 0 5px;
     text-decoration: none; }
 
+div.overlapping {
+  background-color: red; }
+
+ul.clear-list {
+  margin: 0;
+  padding: 0;
+  list-style-type: none; }
+
 input[type='number'] {
   text-align: right; }
 
-table.calendar th {
-  width: 100px;
-  text-align: center; }
-table.calendar td {
-  text-align: center; }
-table.calendar tr.month {
-  font-weight: bold; }
-table.calendar td.day {
-  border: 1px solid black; }
+div.month {
+  margin-bottom: 20px; }
+  div.month table th {
+    text-align: center; }
+  div.month table tr:nth-child(2) th {
+    width: 100px; }
+  div.month table td {
+    text-align: center;
+    border: 1px solid #ddd;
+    cursor: pointer; }
+  div.month table td.selected {
+    background-color: #deb887; }
+  div.month table td.on-work {
+    background-color: #006400; }
