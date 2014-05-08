@@ -37,4 +37,6 @@ div.month {
   div.month table td.selected {
     background-color: #deb887; }
   div.month table td.on-work {
-    background-color: #006400; }
+    background-color: chartreuse; }
+  div.month table td.selected.on-work {
+    background-color: chocolate; }

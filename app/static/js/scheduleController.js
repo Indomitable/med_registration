@@ -18,6 +18,7 @@ app.controller('scheduleController', ['$scope', '$http', function ($scope, $http
                 doctor: doctor
             }
         }).success(function (data) {
+            $scope.months = [];
             for (var i = 0; i < data.length; i++) {
                 $scope.months.push(data[i]);
             }
@@ -25,8 +26,21 @@ app.controller('scheduleController', ['$scope', '$http', function ($scope, $http
     }
 
     $scope.onDateClick = function (day) {
-        if (day.date)
+        if (day.date) {
+
+            if (day.on_work) {
+                if (!day.selected) {
+                    _.each(__self.getDays(), function(d) { d.selected = false; });
+                }
+            } else {
+                _.each(__self.getDays(), function (d) {
+                    if (d.on_work)
+                        d.selected = false
+                });
+            }
+
             day.selected = !day.selected;
+        }
     }
 
     this.getDays = function () {
@@ -68,7 +82,7 @@ app.controller('scheduleController', ['$scope', '$http', function ($scope, $http
                 'doctor': doctor
             }
         }).success(function (data) {
-
+            window.location = window.location;
         })
     }
 

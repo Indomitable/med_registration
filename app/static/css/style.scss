@@ -58,7 +58,11 @@ div.month {
     }
 
     td.on-work {
-      background-color: #006400;
+      background-color: chartreuse;
+    }
+
+    td.selected.on-work {
+      background-color: chocolate;
     }
   }
 }
