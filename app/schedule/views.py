@@ -23,14 +23,23 @@ def get_calendar(request):
     return json_response(calendar.to_dict())
 
 
-def add_work_hours(request):
+def set_work_hours(request):
     data = json.loads(request.body.decode(request.encoding))
     for date_str in data['days']:
         date = datetime.datetime.strptime(date_str, '%Y-%m-%d').date()
         existing_schedule = Schedule.objects.filter(doctor_id=data['doctor'], date=date)
         if len(existing_schedule) > 0:
-            continue
-        schedule = Schedule.objects.create(doctor_id=data['doctor'], date=date)
+            schedule = existing_schedule[0]
+            if len(data['note']) == 0 and len(data['intervals']) == 0:
+                schedule.scheduledate_set.all().delete()
+                schedule.delete()
+                return HttpResponse("OK")
+
+            schedule.note = data['note']
+            schedule.save()
+            schedule.scheduledate_set.all().delete()
+        else:
+            schedule = Schedule.objects.create(doctor_id=data['doctor'], date=date, note=data['note'])
         for interval in data['intervals']:
             from_time = datetime.datetime.strptime(str(math.floor(interval['interval'][0])) + ':' +
                                                    str(math.floor((interval['interval'][0] % 1) * 60)), '%H:%M').time()
@@ -43,3 +52,16 @@ def add_work_hours(request):
     return HttpResponse("OK")
 
 
+def get_work_hours(request, pdate, pdoctor_id):
+    date = datetime.datetime.strptime(pdate, '%Y-%m-%d').date()
+    doctor = int(pdoctor_id)
+    existing_schedules = Schedule.objects.filter(doctor_id=doctor, date=date)
+    if len(existing_schedules) == 0:
+        return json_response([])
+    else:
+        schedule = existing_schedules[0]
+        schedules_as_dict = list(s.to_dict() for s in schedule.scheduledate_set.all())
+        return json_response({
+            'note': schedule.note,
+            'hours': schedules_as_dict
+        })

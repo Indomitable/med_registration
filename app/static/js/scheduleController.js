@@ -1,15 +1,13 @@
-function WorkInterval(interval) {
+function WorkInterval(interval, nzok) {
     this.interval = interval;
-    this.nzok = false;
-    this.note = '';
+    if (nzok)
+        this.nzok = nzok;
+    else
+        this.nzok = false;
 }
 
-app.controller('scheduleController', ['$scope', '$http', function ($scope, $http) {
-    $scope.months = [];
-    $scope.workIntervals = [ new WorkInterval([8, 18]) ];
-    var __self = this;
-
-    $scope.getSchedule = function (doctor) {
+app.service('checkSchedule', ['$http', function ($http) {
+    this.check = function () {
         $http({
             method: 'GET',
             url: '/shedule/calendar',
@@ -22,7 +20,35 @@ app.controller('scheduleController', ['$scope', '$http', function ($scope, $http
             for (var i = 0; i < data.length; i++) {
                 $scope.months.push(data[i]);
             }
-        })
+        });
+    }
+}]);
+
+app.controller('scheduleController', ['$scope', '$http', 'checkSchedule', 'customFormatter', function ($scope, $http, checkSchedule, customFormatter) {
+    $scope.months = [];
+    $scope.workIntervals = [];
+    $scope.note = '';
+    var __self = this;
+
+    $scope.init = function (doctor) {
+        __self.doctor = doctor;
+        __self.getSchedule();
+    }
+
+    __self.getSchedule = function () {
+        $http({
+            method: 'GET',
+            url: '/shedule/calendar',
+            params: {
+                days: 60,
+                doctor: __self.doctor
+            }
+        }).success(function (data) {
+            $scope.months = [];
+            for (var i = 0; i < data.length; i++) {
+                $scope.months.push(data[i]);
+            }
+        });
     }
 
     $scope.onDateClick = function (day) {
@@ -30,20 +56,30 @@ app.controller('scheduleController', ['$scope', '$http', function ($scope, $http
 
             if (day.on_work) {
                 if (!day.selected) {
-                    _.each(__self.getDays(), function(d) { d.selected = false; });
+                    _.each(__self.getDays(), function (d) {
+                        d.selected = false;
+                    });
                 }
             } else {
                 _.each(__self.getDays(), function (d) {
                     if (d.on_work)
-                        d.selected = false
+                        d.selected = false;
                 });
             }
 
             day.selected = !day.selected;
+
+            if (day.selected) {
+                $scope.workIntervals = [];
+                $scope.note = '';
+                if (day.on_work) {
+                    __self.load_day_schedules(day.date);
+                }
+            }
         }
     }
 
-    this.getDays = function () {
+    __self.getDays = function () {
         var days = [];
         for (var i = 0; i < $scope.months.length; i++) {
             for (var j = 0; j < $scope.months[i].weeks.length; j++) {
@@ -75,10 +111,11 @@ app.controller('scheduleController', ['$scope', '$http', function ($scope, $http
         });
         $http({
             method: 'POST',
-            url: '/shedule/calendar/add',
+            url: '/shedule/calendar/set',
             data: {
                 'days': selectedDays,
                 'intervals': $scope.workIntervals,
+                'note': $scope.note,
                 'doctor': doctor
             }
         }).success(function (data) {
@@ -87,14 +124,20 @@ app.controller('scheduleController', ['$scope', '$http', function ($scope, $http
     }
 
     $scope.addWorkHours = function () {
-        var lastInterval = $scope.workIntervals[$scope.workIntervals.length - 1].interval;
         var from = 8, to = 18;
-        if (lastInterval[1] < 23) {
-            from = lastInterval[1] + 0.5;
-            to = lastInterval[1] + 1;
+        if ($scope.workIntervals.length > 0) {
+            var lastInterval = $scope.workIntervals[$scope.workIntervals.length - 1].interval;
+            if (lastInterval[1] < 23) {
+                from = lastInterval[1] + 0.5;
+                to = lastInterval[1] + 1;
+            }
         }
 
         $scope.workIntervals.push(new WorkInterval([from, to]));
+    }
+
+    $scope.removeHour = function (interval_index) {
+        $scope.workIntervals.splice(interval_index, 1);
     }
 
     $scope.fromHour = function (interval_index) {
@@ -111,7 +154,7 @@ app.controller('scheduleController', ['$scope', '$http', function ($scope, $http
         return Math.floor($scope.workIntervals[interval_index].interval[1]) + ":" + part;
     }
 
-    this.hasOverlappingInterval = function(interval_index) {
+    __self.hasOverlappingInterval = function (interval_index) {
         for (var i = 0; i < $scope.workIntervals.length; i++) {
             if (interval_index == i)
                 continue;
@@ -125,6 +168,22 @@ app.controller('scheduleController', ['$scope', '$http', function ($scope, $http
 
     $scope.is_overlapps = function (interval_index) {
         return __self.hasOverlappingInterval(interval_index);
+    }
+
+    __self.load_day_schedules = function (date) {
+        $http({
+            method: 'GET',
+            url: '/shedule/calendar/get_date/' + date + '/' + __self.doctor
+        }).success(function (data) {
+            if (!data)
+                return;
+            $scope.note = data.note;
+            $scope.workIntervals = [];
+            for (var i = 0; i < data.hours.length; i++) {
+                var val = data.hours[i];
+                $scope.workIntervals.push(new WorkInterval([val.from, val.to], val.nzok))
+            }
+        });
     }
 }]);
 

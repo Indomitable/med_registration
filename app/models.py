@@ -31,6 +31,15 @@ class ScheduleDate(models.Model):
     to_time = models.TimeField()
     nzok = models.BooleanField(default=False)
 
+    def to_dict(self):
+        from_time = self.from_time.hour + self.from_time.minute / 60
+        to_time = self.to_time.hour + self.to_time.minute / 60
+        return dict({
+            'from': from_time,
+            'to': to_time,
+            'nzok': self.nzok
+        })
+
 
 class Patient(models.Model):
     first_name = models.CharField(max_length=100)
