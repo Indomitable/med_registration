@@ -25,7 +25,8 @@
                             <tbody>
                             <tr ng-repeat="week in month.weeks">
                                 <td ng-repeat="day in week" ng-click="onDateClick(day)" ng-bind="day.date | dayFormat"
-                                    ng-class="{'selected': day.selected, 'on-work': day.on_work}"></td>
+                                    ng-class="{'selected': day.selected, 'out-calendar': day.status == -1, 'not-set': day.status == 0, 'setted': day.status == 1, 'no-interval': day.status == 2}">
+                                </td>
                             </tr>
                             </tbody>
                         </table>

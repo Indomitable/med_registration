@@ -16,7 +16,12 @@
 - model: app.Doctor
   pk: 1
   fields:
-   title: 2
-   first_name: Венцислав
-   last_name: Младенов
-   default_exam_time: 20
+    title: 2
+    first_name: Венцислав
+    last_name: Младенов
+    default_exam_time: 20
+- model: app.ModelChange
+  pk: 1
+  fields:
+    model_name: Schedule
+    change_number: 1

@@ -26,7 +26,7 @@ class Schedule(models.Model):
 
 
 class ScheduleDate(models.Model):
-    schedule = models.ForeignKey(Schedule)
+    schedule = models.ForeignKey(Schedule, on_delete=models.CASCADE)
     from_time = models.TimeField()
     to_time = models.TimeField()
     nzok = models.BooleanField(default=False)
@@ -58,3 +58,8 @@ class Reservation(models.Model):
     shedule = models.ForeignKey(Schedule)
     patient = models.ForeignKey(Patient)
     payType = models.ForeignKey(PayType)
+
+
+class ModelChange(models.Model):
+    model_name = models.CharField(max_length=50)
+    change_number = models.IntegerField(default=0)

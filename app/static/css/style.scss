@@ -59,16 +59,30 @@ div.month {
       cursor: pointer;
     }
 
-    td.selected {
+    td.out-calendar {
+      background-color: #eee;
+    }
+
+    td.not-set {
+      background-color: #fff;
+    }
+
+    td.not-set.selected {
       background-color: #deb887;
     }
 
-    td.on-work {
-      background-color: chartreuse;
+    td.setted {
+      background-color: #7fff00;
     }
 
-    td.selected.on-work {
-      background-color: chocolate;
+    td.setted.selected {
+      background-color: #d2691e;
     }
+
+    td.no-interval {
+      background-color: #1e90ff;
+    }
+
+
   }
 }

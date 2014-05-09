@@ -5,7 +5,7 @@ from django.http.response import HttpResponse
 from django.shortcuts import render
 from app.infrastructure.calendar import Calendar
 from app.infrastructure.helpers import json_response
-from app.models import Doctor, Schedule, ScheduleDate
+from app.models import Doctor, Schedule, ScheduleDate, ModelChange
 
 
 def doctor_shedule(request, doctor_id):
@@ -25,13 +25,17 @@ def get_calendar(request):
 
 def set_work_hours(request):
     data = json.loads(request.body.decode(request.encoding))
+
+    model_change = ModelChange.objects.get(model_name='Schedule')
+    model_change.change_number += 1
+    model_change.save()
+
     for date_str in data['days']:
         date = datetime.datetime.strptime(date_str, '%Y-%m-%d').date()
         existing_schedule = Schedule.objects.filter(doctor_id=data['doctor'], date=date)
         if len(existing_schedule) > 0:
             schedule = existing_schedule[0]
             if len(data['note']) == 0 and len(data['intervals']) == 0:
-                schedule.scheduledate_set.all().delete()
                 schedule.delete()
                 return HttpResponse("OK")
 

@@ -54,7 +54,7 @@ app.controller('scheduleController', ['$scope', '$http', 'checkSchedule', 'custo
     $scope.onDateClick = function (day) {
         if (day.date) {
 
-            if (day.on_work) {
+            if (day.status > 0) {
                 if (!day.selected) {
                     _.each(__self.getDays(), function (d) {
                         d.selected = false;
@@ -62,7 +62,7 @@ app.controller('scheduleController', ['$scope', '$http', 'checkSchedule', 'custo
                 }
             } else {
                 _.each(__self.getDays(), function (d) {
-                    if (d.on_work)
+                    if (d.status > 0)
                         d.selected = false;
                 });
             }
@@ -72,7 +72,7 @@ app.controller('scheduleController', ['$scope', '$http', 'checkSchedule', 'custo
             if (day.selected) {
                 $scope.workIntervals = [];
                 $scope.note = '';
-                if (day.on_work) {
+                if (day.status > 0) {
                     __self.load_day_schedules(day.date);
                 }
             }
